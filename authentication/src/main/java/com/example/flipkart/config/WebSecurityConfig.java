@@ -4,6 +4,7 @@ import com.example.flipkart.utils.JwtAuthenticationEntryPoint;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -37,8 +38,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
         // configure AuthenticationManager so that it knows from where to load
         // user for matching credentials
-        // Use BCryptPasswordEncoder
-//		auth.userDetailsService(jwtUserDetailsService);
+       //  Use BCryptPasswordEncoder
+	auth.userDetailsService(jwtUserDetailsService);
         auth.userDetailsService(jwtUserDetailsService).passwordEncoder(passwordEncoder);
 
     }
@@ -55,7 +56,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         httpSecurity.cors().and().csrf().disable()
                 // dont authenticate this particular request
                 .authorizeRequests()
-                .antMatchers("/authenticate", "/home/**","/user/**",
+             //   .antMatchers(HttpMethod.POST,jwtUserDetails.getUri()).permitAll())
+                .antMatchers( "/home/**","/user/**",
                         "/h2-console/**","/v3/api-docs/**","/swagger-ui/**").permitAll()
                 .antMatchers("/admin/**").access("hasRole('ADMIN')")
 //                .antMatchers("/user/**").access("hasRole('USER')")

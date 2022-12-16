@@ -6,6 +6,8 @@ import com.example.flipKart.model.CustomerModel;
 import com.example.flipKart.model.OrderModel;
 import com.example.flipKart.repository.OrderRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.client.loadbalancer.LoadBalanced;
+import org.springframework.context.annotation.Bean;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -22,10 +24,11 @@ import java.util.Map;
         @Autowired
         private RestTemplate rest;
 
-        String url = "lb://PRODUCT/product/item-price/{quantity}/{itemNumber}";
+        String url = "lb://FLIPKART/flipkart/item-price/{quantity}/{itemNumber}";
         Map<String,Object> urlVariables = new HashMap<>();
         public Order saveOrder(OrderModel model, long itemId) {
             Order order = new Order();
+          //  order.setItemId(itemId);
             String trnNumber = "trn000"+ ++trnIndex;
             order.setTrnNumber(trnNumber);
             order.setItemId(itemId);
@@ -47,8 +50,8 @@ import java.util.Map;
             urlVariables.put("itemNumber", itemId);
             ResponseEntity<Double> price = rest.getForEntity(url, double.class,urlVariables);
             order.setPrice(price.getBody() * model.getCustomers().size());
-            Order ordered = orderRepository.save(order);
-            return order;
+            Order orde= orderRepository.save(order);
+            return orde;
         }
 
         public String cancelOrder(String tnr) throws ProductOrderException {
@@ -63,14 +66,12 @@ import java.util.Map;
 
         public Order getOrder(String tnr) throws ProductOrderException {
             return orderRepository.findById(tnr).
-                    orElseThrow(()-> new ProductOrderException("No Order found with pnr "+tnr));
+                    orElseThrow(()-> new ProductOrderException("No Order found with tnr "+tnr));
         }
 
         public List<Order> getHistory(String email) {
             return orderRepository.findByEmail(email.toLowerCase());
         }
-
-
 
 
     }

@@ -8,26 +8,43 @@ import com.example.flipKart.model.OrderModel;
 
 import com.example.flipKart.services.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
 
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
 
 @RestController
-@RequestMapping("/order")
+@RequestMapping("/shopping")
 public class ProductOrderController {
     @Autowired
-   private OrderService orderService;
+    OrderService orderService;
 
+
+    private static final String GET_FLIPKART= "http://localhost:6502/flipkart/item-price/{quantity}/{itemNumber}";
+    private static RestTemplate restTemplate = new RestTemplate();
+    private void getDetailsById() {
+
+        Map< String, String > params = new HashMap< String, String >();
+        params.put("itemId", "2");
+
+         RestTemplate restTemplate = new RestTemplate();
+        Order result = restTemplate.getForObject(GET_FLIPKART,Order.class, params);
+
+        System.out.println(result);
+    }
     @PostMapping("/{itemId}")
     public ResponseEntity<Order> save(@RequestBody OrderModel model, @PathVariable long itemId) {
         Order order = orderService.saveOrder(model,itemId);
         return new ResponseEntity<>(order,order != null? HttpStatus.OK:HttpStatus.NO_CONTENT);
     }
 
-    @GetMapping("/order/{tnr}")
+    @GetMapping("/order/{trn}")
     public ResponseEntity<Order> getOrder(@PathVariable String trn) throws ProductOrderException {
         Order order = orderService.getOrder(trn);
         return new ResponseEntity<>(order,order != null? HttpStatus.OK:HttpStatus.NO_CONTENT);
