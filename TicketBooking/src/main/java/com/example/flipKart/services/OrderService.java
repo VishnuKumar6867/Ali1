@@ -24,7 +24,7 @@ import java.util.Map;
         @Autowired
         private RestTemplate rest;
 
-        String url = "lb://FLIPKART/flipkart/item-price/{quantity}/{itemNumber}";
+        String url = "http://localhost:6502/flipkart/item-price/{quantity}/{itemNumber}";
         Map<String,Object> urlVariables = new HashMap<>();
         public Order saveOrder(OrderModel model, long itemId) {
             Order order = new Order();

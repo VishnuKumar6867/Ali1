@@ -85,11 +85,6 @@ public class AdminController {
         return new ResponseEntity<>(item, item != null ? HttpStatus.OK : HttpStatus.NO_CONTENT);
     }
 
-   /* @PostMapping("/user/airline/searchFlight")
-    public ResponseEntity<List<SearchResponse>> addFlight(@RequestBody SearchModel searchModel) {
-        List<SearchResponse> responses = adminService.searchItem(searchModel);
-        return new ResponseEntity<>(responses, responses != null ? HttpStatus.OK : HttpStatus.NO_CONTENT);
-    }*/
 
     @PostMapping("/user/order/{itemId}")
     public ResponseEntity<OrderResponse> addOrder(@RequestBody OrderModel model, @PathVariable long itemId){
